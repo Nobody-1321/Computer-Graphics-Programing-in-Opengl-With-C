@@ -61,7 +61,7 @@ void setupVertices() {
     std::vector<glm::vec2> texCoords = mySphere.getTexCoords();
     std::vector<float> tvalues;
     for (const auto& t : texCoords) {
-        tvalues.push_back(t.s);
+        tvalues.push_back(1.0f - t.s); // <--- Invertir el eje X
         tvalues.push_back(t.t);
     }
 
@@ -104,8 +104,10 @@ void display(GLFWwindow *window, double currentTime) {
     vMat = glm::translate(glm::mat4(1.0f), glm::vec3(-cameraX, -cameraY, -cameraZ));
 
     // Aplicar la rotación de 45 grados alrededor del eje Y
-    float angle = glm::radians(45.0f);
-    mMat = glm::rotate(glm::mat4(1.0f), (float)currentTime, glm::vec3(1.0f, 0.0f, 0.0f));
+    float angle = glm::radians(100.0f);
+    mMat = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 0.0f, 0.0f));
+    mMat = glm::rotate(mMat, (float)currentTime, glm::vec3(0.0f, 0.0f, 1.0f));
+    
 
     mvMat = vMat * mMat;
 
