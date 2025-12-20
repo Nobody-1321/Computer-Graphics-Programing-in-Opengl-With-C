@@ -22,6 +22,8 @@ GLuint vbo[numVBOs];
 
 GLuint screenQuadShader = 0;
 GLuint raytraceComputeShader = 0;
+GLuint brickTexture, earthTexture;
+GLuint xpTex, xnTex, ypTex, ynTex, zpTex, znTex;
 
 void init(GLFWwindow* window) {
     const float windowQuadVerts[] = {
@@ -86,22 +88,60 @@ void init(GLFWwindow* window) {
 
     // Cargar shaders
     screenQuadShader = Utils::createShaderProgram("shaders/vertex_shader162_.glsl", "shaders/fragment_shader162_.glsl");
-    raytraceComputeShader = Utils::createShaderProgramCP("shaders/compute_shader165.glsl");
+    raytraceComputeShader = Utils::createShaderProgramCP("shaders/compute_shader1661.glsl");
+
+    brickTexture = Utils::loadTexture("textures/brick1.jpg");
+	earthTexture = Utils::loadTexture("textures/world.jpg");
+
+    xpTex = Utils::loadTexture("textures/cubeMap2/xp.jpg");
+	xnTex = Utils::loadTexture("textures/cubeMap2/xn.jpg");
+	ypTex = Utils::loadTexture("textures/cubeMap2/yp.jpg");
+	ynTex = Utils::loadTexture("textures/cubeMap2/yn.jpg");
+	zpTex = Utils::loadTexture("textures/cubeMap2/zp.jpg");
+	znTex = Utils::loadTexture("textures/cubeMap2/zn.jpg");
+
 }
 
 void display(GLFWwindow* window, double currentTime) {
     // Ejecución del shader de cómputo
     glUseProgram(raytraceComputeShader);
     glBindImageTexture(0, screenTextureID, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, brickTexture);
+    
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, earthTexture);
+
+    glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, xpTex);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, xnTex);
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, ypTex);
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, ynTex);
+	glActiveTexture(GL_TEXTURE7);
+	glBindTexture(GL_TEXTURE_2D, zpTex);
+	glActiveTexture(GL_TEXTURE8);
+	glBindTexture(GL_TEXTURE_2D, znTex);
+    
+    glActiveTexture(GL_TEXTURE0);
+
     glUniform2i(glGetUniformLocation(raytraceComputeShader, "image_size"), WIDTH, HEIGHT);
-    glDispatchCompute(WIDTH, HEIGHT, 1);
-    glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+    
+    //glDispatchCompute(WIDTH, HEIGHT, 1);
+    glDispatchCompute((WIDTH  + 15) / 16, (HEIGHT + 15) / 16, 1);
+    glMemoryBarrier(GL_ALL_BARRIER_BITS);
+    //glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 
     // Dibujar textura en pantalla
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(screenQuadShader);
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, screenTextureID);
+
     glBindVertexArray(vao[0]);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glBindVertexArray(0);
@@ -131,7 +171,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "program_16_5", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "program_16_61", nullptr, nullptr);
     if (!window) {
         std::cerr << "No se pudo crear la ventana GLFW\n";
         glfwTerminate();

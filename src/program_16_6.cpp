@@ -148,7 +148,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "program_16_4", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "program_16_6", nullptr, nullptr);
     if (!window) {
         std::cerr << "No se pudo crear la ventana GLFW\n";
         glfwTerminate();
