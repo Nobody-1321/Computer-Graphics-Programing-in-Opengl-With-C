@@ -60,3 +60,7 @@ if __name__ == "__main__":
     
     # Call the main function with the specified program
     main(args.program)
+
+
+# Example usage:
+# python buildLinuxExe.py compute_shader1610
